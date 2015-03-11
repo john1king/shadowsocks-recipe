@@ -1,68 +1,52 @@
-shadowsocks-recipe Cookbook
-===========================
-TODO: Enter the cookbook description here.
+安装多个 shadowsocks server 的 Chef 食谱。
 
-e.g.
-This cookbook makes your favorite breakfast sandwich.
+## 准备工作
 
-Requirements
-------------
-TODO: List your cookbook requirements. Be sure to include any requirements this cookbook has on platforms, libraries, other cookbooks, packages, operating systems, etc.
+这个食谱没有发布，所以需要使用 Berkshelf 管理。首先安装必要的 gem
 
-e.g.
-#### packages
-- `toaster` - shadowsocks-recipe needs toaster to brown your bagel.
+    $ gem install chef knife-solo berkshelf
 
-Attributes
-----------
-TODO: List your cookbook attributes here.
+创建一个 solo 项目
 
-e.g.
-#### shadowsocks-recipe::default
-<table>
-  <tr>
-    <th>Key</th>
-    <th>Type</th>
-    <th>Description</th>
-    <th>Default</th>
-  </tr>
-  <tr>
-    <td><tt>['shadowsocks-recipe']['bacon']</tt></td>
-    <td>Boolean</td>
-    <td>whether to include bacon</td>
-    <td><tt>true</tt></td>
-  </tr>
-</table>
+    $ knife solo init yourproject
+    $ cd yourproject
 
-Usage
------
-#### shadowsocks-recipe::default
-TODO: Write usage instructions for each cookbook.
+在 Berksfile 中加入
 
-e.g.
-Just include `shadowsocks-recipe` in your node's `run_list`:
+    cookbook 'shadowsocks', github: 'john1king/shadowsocks-recipe'
+
+执行
+
+    $ berks install
+
+安装 chef 的服务器环境，服务器已安装 chef 的可以跳过
+
+    $ knife solo prepare user@yourhost
+
+## 食用方法
+
+在 `nodes/yourhost.json` 文件中加入 `shadowsocks` 配置，如
 
 ```json
 {
-  "name":"my_node",
   "run_list": [
-    "recipe[shadowsocks-recipe]"
-  ]
+    "shadowsocks",
+  ],
+  "shadowsocks": {
+    "servers": [{
+      "name": "admin",
+      "password": "******",
+      "server_port": 12345
+    }, {
+      "name": "guest",
+      "password": "******",
+      "server_port": 23456
+    }]
+  }
 }
 ```
 
-Contributing
-------------
-TODO: (optional) If this is a public cookbook, detail the process for contributing. If this is a private cookbook, remove this section.
+执行
 
-e.g.
-1. Fork the repository on Github
-2. Create a named feature branch (like `add_component_x`)
-3. Write your change
-4. Write tests for your change (if applicable)
-5. Run the tests, ensuring they all pass
-6. Submit a Pull Request using Github
+    $ knife solo cook yourhost
 
-License and Authors
--------------------
-Authors: TODO: List authors
