@@ -1,0 +1,4 @@
+[program:<%= @name %>]
+command=ssserver -c /etc/shadowsocks/<%= @name %>.json
+autorestart=true
+user=nobody
